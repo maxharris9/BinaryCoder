@@ -104,11 +104,11 @@ extension BinaryEncoder: Encoder {
     }
     
     public func unkeyedContainer() -> UnkeyedEncodingContainer {
-        return UnkeyedContanier(encoder: self)
+        return UnkeyedContainer(encoder: self)
     }
     
     public func singleValueContainer() -> SingleValueEncodingContainer {
-        return UnkeyedContanier(encoder: self)
+        return UnkeyedContainer(encoder: self)
     }
     
     private struct KeyedContainer<Key: CodingKey>: KeyedEncodingContainerProtocol {
@@ -139,7 +139,7 @@ extension BinaryEncoder: Encoder {
         }
     }
     
-    private struct UnkeyedContanier: UnkeyedEncodingContainer, SingleValueEncodingContainer {
+    private struct UnkeyedContainer: UnkeyedEncodingContainer, SingleValueEncodingContainer {
         var encoder: BinaryEncoder
         
         var codingPath: [CodingKey] { return [] }
