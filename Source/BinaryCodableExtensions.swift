@@ -5,16 +5,16 @@ import Foundation
 
 extension Array: BinaryCodable where Element: Codable {
     public func binaryEncode(to encoder: BinaryEncoder) throws {
-        try encoder.encode(self.count)
+        try encoder.encode(UInt32(self.count))
         for element in self {
             try (element).encode(to: encoder)
         }
     }
     
     public init(fromBinary decoder: BinaryDecoder) throws {
-        let count = try decoder.decode(Int.self)
+        let count = try decoder.decode(UInt32.self)
         self.init()
-        self.reserveCapacity(count)
+        self.reserveCapacity(Int(count))
         for _ in 0 ..< count {
             let decoded = try Element.self.init(from: decoder)
             self.append(decoded)
@@ -39,7 +39,7 @@ extension String: BinaryCodable {
 
 extension FixedWidthInteger where Self: BinaryEncodable {
     public func binaryEncode(to encoder: BinaryEncoder) {
-        encoder.appendBytes(of: self.bigEndian)
+        encoder.appendBytes(of: self.littleEndian)
     }
 }
 
@@ -47,7 +47,7 @@ extension FixedWidthInteger where Self: BinaryDecodable {
     public init(fromBinary binaryDecoder: BinaryDecoder) throws {
         var v = Self.init()
         try binaryDecoder.read(into: &v)
-        self.init(bigEndian: v)
+        self.init(littleEndian: v)
     }
 }
 
@@ -65,4 +65,6 @@ extension Int32: BinaryCodable {}
 extension UInt32: BinaryCodable {}
 extension Int64: BinaryCodable {}
 extension UInt64: BinaryCodable {}
+extension Float32: BinaryCodable {}
+extension Float64: BinaryCodable {}
 

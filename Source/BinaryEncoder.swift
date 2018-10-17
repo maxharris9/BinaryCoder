@@ -54,11 +54,11 @@ public extension BinaryEncoder {
     }
     
     func encode(_ value: Float) {
-        appendBytes(of: CFConvertFloatHostToSwapped(value))
+        appendBytes(of: (value))
     }
     
     func encode(_ value: Double) {
-        appendBytes(of: CFConvertDoubleHostToSwapped(value))
+        appendBytes(of: (value))
     }
     
     func encode(_ encodable: Encodable) throws {

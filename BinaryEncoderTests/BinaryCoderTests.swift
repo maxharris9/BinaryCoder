@@ -9,13 +9,13 @@ class BinaryCoderTests: XCTestCase {
         let data = try BinaryEncoder.encode(s)
         XCTAssertEqual(data, [
             1,
-            0, 2,
-            0, 0, 0, 3,
-            0, 0, 0, 0, 0, 0, 0, 4,
-            0, 0, 0, 0, 0, 0, 0, 5,
+            2, 0,
+            3, 0, 0, 0,
+            4, 0, 0, 0, 0, 0, 0, 0,
+            5, 0, 0, 0, 0, 0, 0, 0,
             
-            0x40, 0xC0, 0x00, 0x00,
-            0x40, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xC0, 0x40,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C, 0x40,
             
             0x00, 0x01
         ])
@@ -24,14 +24,14 @@ class BinaryCoderTests: XCTestCase {
     func testPrimitiveDecoding() throws {
         let data: [UInt8] = [
             1,
-            0, 2,
-            0, 0, 0, 3,
-            0, 0, 0, 0, 0, 0, 0, 4,
-            0, 0, 0, 0, 0, 0, 0, 5,
-            
-            0x40, 0xC0, 0x00, 0x00,
-            0x40, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            
+            2, 0,
+            3, 0, 0, 0,
+            4, 0, 0, 0, 0, 0, 0, 0,
+            5, 0, 0, 0, 0, 0, 0, 0,
+
+            0x00, 0x00, 0xC0, 0x40,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C, 0x40,
+
             0x00, 0x01
         ]
         let s = try BinaryDecoder.decode(Primitives.self, data: data)
