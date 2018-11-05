@@ -10,7 +10,7 @@ extension Array: BinaryCodable where Element: Codable {
             try (element).encode(to: encoder)
         }
     }
-    
+
     public init(fromBinary decoder: BinaryDecoder) throws {
         let count = try decoder.decode(UInt32.self)
         self.init()
@@ -26,7 +26,7 @@ extension String: BinaryCodable {
     public func binaryEncode(to encoder: BinaryEncoder) throws {
         try Array(self.utf8).binaryEncode(to: encoder)
     }
-    
+
     public init(fromBinary decoder: BinaryDecoder) throws {
         let utf8: [UInt8] = try Array(fromBinary: decoder)
         if let str = String(bytes: utf8, encoding: .utf8) {
@@ -51,12 +51,6 @@ extension FixedWidthInteger where Self: BinaryDecodable {
     }
 }
 
-// for size in [8, 16, 32, 64] {
-//     for prefix in ["", "U"] {
-//         print("extension \(prefix)Int\(size): BinaryCodable {}")
-//     }
-// }
-// Copy the above snippet, then run: `pbpaste | swift`
 extension Int8: BinaryCodable {}
 extension UInt8: BinaryCodable {}
 extension Int16: BinaryCodable {}
@@ -67,4 +61,3 @@ extension Int64: BinaryCodable {}
 extension UInt64: BinaryCodable {}
 extension Float32: BinaryCodable {}
 extension Float64: BinaryCodable {}
-
