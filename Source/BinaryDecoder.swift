@@ -79,15 +79,15 @@ public extension BinaryDecoder {
     }
     
     func decode(_ type: Float.Type) throws -> Float {
-        var swapped = CFSwappedFloat32()
+        var swapped = Float32()
         try read(into: &swapped)
-        return CFConvertFloatSwappedToHost(swapped)
+        return (swapped)
     }
     
     func decode(_ type: Double.Type) throws -> Double {
-        var swapped = CFSwappedFloat64()
+        var swapped = Float64()
         try read(into: &swapped)
-        return CFConvertDoubleSwappedToHost(swapped)
+        return (swapped)
     }
     
     func decode<T: Decodable>(_ type: T.Type) throws -> T {
@@ -238,6 +238,6 @@ private extension FixedWidthInteger {
     static func from(binaryDecoder: BinaryDecoder) throws -> Self {
         var v = Self.init()
         try binaryDecoder.read(into: &v)
-        return self.init(bigEndian: v)
+        return self.init(littleEndian: v)
     }
 }
