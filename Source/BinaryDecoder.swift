@@ -1,7 +1,6 @@
 
 import Foundation
 
-
 /// A protocol for types which can be decoded from binary.
 public protocol BinaryDecodable: Decodable {
     init(fromBinary decoder: BinaryDecoder) throws
@@ -18,19 +17,21 @@ public extension BinaryDecodable {
 
 /// The actual binary decoder class.
 public class BinaryDecoder {
-    fileprivate let data: [UInt8]
-    fileprivate var cursor = 0
-    
-    public init(data: [UInt8]) {
+    private let data: [UInt8]
+    private var cursor = 0
+    private var progressCallback: (_ current: Int, _ total: Int) -> Void
+
+    public init(data: [UInt8], progressCallback: @escaping (_ current: Int, _ total: Int) -> Void) {
         self.data = data
+        self.progressCallback = progressCallback
     }
 }
 
 /// A convenience function for creating a decoder from some data and decoding it
 /// into a value all in one shot.
 public extension BinaryDecoder {
-    static func decode<T: BinaryDecodable>(_ type: T.Type, data: [UInt8]) throws -> T {
-        return try BinaryDecoder(data: data).decode(T.self)
+    static func decode<T: BinaryDecodable>(_: T.Type, data: [UInt8], _ progressCallback: @escaping (_ current: Int, _ total: Int) -> Void) throws -> T {
+        try BinaryDecoder(data: data, progressCallback: progressCallback).decode(T.self)
     }
 }
 
@@ -91,6 +92,7 @@ public extension BinaryDecoder {
     }
     
     func decode<T: Decodable>(_ type: T.Type) throws -> T {
+        self.progressCallback(self.cursor, self.data.count)
         switch type {
         case is Int.Type:
             let v = try decode(Int64.self)
