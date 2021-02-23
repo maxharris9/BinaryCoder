@@ -34,7 +34,8 @@ class BinaryCoderTests: XCTestCase {
 
             0x00, 0x01
         ]
-        let s = try BinaryDecoder.decode(Primitives.self, data: data)
+        func progressCallback (current: Int, total: Int) {}
+        let s = try BinaryDecoder.decode(Primitives.self, data: data, progressCallback: progressCallback, steps: 100)
         XCTAssertEqual(s.a, 1)
         XCTAssertEqual(s.b, 2)
         XCTAssertEqual(s.c, 3)
@@ -84,7 +85,8 @@ private func AssertEqual<T>(_ lhs: T, _ rhs: T, file: StaticString = #file, line
 private func AssertRoundtrip<T: BinaryCodable>(_ original: T, file: StaticString = #file, line: UInt = #line) {
     do {
         let data = try BinaryEncoder.encode(original)
-        let roundtripped = try BinaryDecoder.decode(T.self, data: data)
+        func progressCallback (current: Int, total: Int) {}
+        let roundtripped = try BinaryDecoder.decode(T.self, data: data, progressCallback: progressCallback, steps: 100)
         AssertEqual(original, roundtripped, file: file, line: line)
     } catch {
         XCTFail("Unexpected error: \(error)", file: file, line: line)

@@ -20,18 +20,21 @@ public class BinaryDecoder {
     private let data: [UInt8]
     private var cursor = 0
     private var progressCallback: (_ current: Int, _ total: Int) -> Void
+    private let divisor: Int
 
-    public init(data: [UInt8], progressCallback: @escaping (_ current: Int, _ total: Int) -> Void) {
+    public init(data: [UInt8], progressCallback: @escaping (_ current: Int, _ total: Int) -> Void, steps: Float) {
         self.data = data
         self.progressCallback = progressCallback
+        self.divisor = Int(Float(self.data.count) / steps)
+
     }
 }
 
 /// A convenience function for creating a decoder from some data and decoding it
 /// into a value all in one shot.
 public extension BinaryDecoder {
-    static func decode<T: BinaryDecodable>(_: T.Type, data: [UInt8], _ progressCallback: @escaping (_ current: Int, _ total: Int) -> Void) throws -> T {
-        try BinaryDecoder(data: data, progressCallback: progressCallback).decode(T.self)
+    static func decode<T: BinaryDecodable>(_: T.Type, data: [UInt8], progressCallback: @escaping (_ current: Int, _ total: Int) -> Void, steps: Float) throws -> T {
+        try BinaryDecoder(data: data, progressCallback: progressCallback, steps: steps).decode(T.self)
     }
 }
 
@@ -92,7 +95,9 @@ public extension BinaryDecoder {
     }
     
     func decode<T: Decodable>(_ type: T.Type) throws -> T {
-        self.progressCallback(self.cursor, self.data.count)
+        if (self.cursor != 0 && self.divisor != 0 && self.cursor % self.divisor == 0) {
+            self.progressCallback(self.cursor, self.data.count)
+        }
         switch type {
         case is Int.Type:
             let v = try decode(Int64.self)
